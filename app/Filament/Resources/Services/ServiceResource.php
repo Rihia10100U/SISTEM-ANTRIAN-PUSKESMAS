@@ -2,90 +2,49 @@
 
 namespace App\Filament\Resources\Services;
 
-use App\Filament\Resources\Services\Pages\ManageServices;
+use App\Filament\Resources\Services\Pages\CreateService;
+use App\Filament\Resources\Services\Pages\EditService;
+use App\Filament\Resources\Services\Pages\ListServices;
+use App\Filament\Resources\Services\Schemas\ServiceForm;
+use App\Filament\Resources\Services\Tables\ServicesTable;
 use App\Models\Service;
 use BackedEnum;
-use UnitEnum;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static ?string $navigationLabel = 'Layanan';
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    
-    protected static string|UnitEnum|null $navigationGroup = 'Administrasi';
+
+    protected static ?string $recordTitleAttribute = 'Form tambah data';
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required(),
-                TextInput::make('prefix')
-                    ->required(),
-                TextInput::make('padding')
-                    ->required()
-                    ->numeric(),
-                Toggle::make('is_active')
-                    ->required(),
-            ]);
+        return ServiceForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->recordTitleAttribute('name')
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('prefix')
-                    ->searchable(),
-                TextColumn::make('padding')
-                    ->numeric()
-                    ->sortable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+        return ServicesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManageServices::route('/'),
+            'index' => ListServices::route('/'),
+            'create' => CreateService::route('/create'),
+            'edit' => EditService::route('/{record}/edit'),
         ];
     }
 }
