@@ -25,8 +25,8 @@ class ServiceResource extends Resource
 
     protected static ?string $navigationLabel = 'Layanan';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+
     protected static string|UnitEnum|null $navigationGroup = 'Administrasi';
 
     public static function form(Schema $schema): Schema
