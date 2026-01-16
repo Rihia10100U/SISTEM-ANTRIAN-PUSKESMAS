@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'counter_id',
     ];
 
     /**
@@ -45,4 +47,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-}
+
+    public function counter()
+    {
+        return $this->belongsTo(Counter::class);
+    }
+};
