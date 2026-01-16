@@ -12,11 +12,14 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+
 
 class UserResource extends Resource
 {
@@ -49,6 +52,7 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('email')
@@ -61,14 +65,13 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
+
             ])
             ->filters([
                 //
             ])
+
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),

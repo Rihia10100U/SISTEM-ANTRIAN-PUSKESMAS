@@ -14,6 +14,7 @@ class ManageQueues extends ManageRecords
     {
         return [
             CreateAction::make(),
+
         ];
     }
 }

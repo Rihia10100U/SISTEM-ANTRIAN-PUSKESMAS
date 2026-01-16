@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mesin Antrian Puskesmas Tinewati</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     @filamentScripts
     @filamentStyles
 </head>
@@ -37,25 +37,25 @@
         // Fungsi untuk update waktu realtime
         function updateRealtimeClock() {
             const now = new Date();
-            
+
             // Format waktu: HH.MM.SS
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const timeString = `${hours}.${minutes}.${seconds}`;
-            
+
             // Format tanggal: Hari, DD Bulan YYYY
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            
+
             const dayName = days[now.getDay()];
             const date = now.getDate();
             const monthName = months[now.getMonth()];
             const year = now.getFullYear();
-            
+
             const dateString = `${dayName}, ${date} ${monthName} ${year}`;
-            
+
             // Update elemen di DOM
             document.getElementById('date').textContent = dateString;
             document.getElementById('time').textContent = timeString;
@@ -63,7 +63,7 @@
 
         // Update waktu setiap detik
         setInterval(updateRealtimeClock, 1000);
-        
+
         // Inisialisasi awal
         updateRealtimeClock();
 
