@@ -31,73 +31,47 @@ class UserResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Administrasi';
 
-    protected static ?int $navigationSort = 4;
-
- public static function form(Schema $schema): Schema
-{
-    return $schema->schema([
-        TextInput::make('name')
-            ->required(),
-
-        TextInput::make('email')
-            ->label('Email address')
-            ->email()
-            ->required(),
-
-        DateTimePicker::make('email_verified_at'),
-
-        TextInput::make('password')
-            ->password()
-            ->required()
-            ->maxLength(255)
-            ->hiddenOn('edit'),
-
-        Select::make('role')
-            ->options([
-                'admin' => 'Admin',
-                'operator' => 'Operator',
-            ])
-            ->default('admin')
-            ->live()
-            ->required(),
-
-        Select::make('counter_id')
-            ->relationship('counter', 'name')
-            ->visible(fn ($get) => $get('role') === 'operator'),
-
-    ]);
-}
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required(),
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email()
+                    ->required(),
+                DateTimePicker::make('email_verified_at'),
+                TextInput::make('password')
+                    ->password()
+                    ->required(),
+            ]);
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('name')->searchable(),
 
+                TextColumn::make('name')
+                    ->searchable(),
                 TextColumn::make('email')
                     ->label('Email address')
                     ->searchable(),
-
                 TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
-
-                TextColumn::make('role')->searchable(),
-
-                TextColumn::make('counter.name')
-                    ->label('Counter')
-                    ->searchable(),
-
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
+            ->filters([
+                //
+            ])
+
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
