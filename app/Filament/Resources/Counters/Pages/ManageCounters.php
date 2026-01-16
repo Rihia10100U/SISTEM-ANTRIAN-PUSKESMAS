@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Filament\Resources\Queues\Pages;
+namespace App\Filament\Resources\Counters\Pages;
 
-use App\Filament\Resources\Queues\QueueResource;
+use App\Filament\Resources\Counters\CounterResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
-class ManageQueues extends ManageRecords
+class ManageCounters extends ManageRecords
 {
-    protected static string $resource = QueueResource::class;
+    protected static string $resource = CounterResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make(),
-
         ];
     }
 }

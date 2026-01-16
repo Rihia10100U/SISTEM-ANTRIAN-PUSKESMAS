@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Filament\Resources\Queues\Pages;
+namespace App\Filament\Resources\Users\Pages;
 
-use App\Filament\Resources\Queues\QueueResource;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
-class ManageQueues extends ManageRecords
+class ManageUsers extends ManageRecords
 {
-    protected static string $resource = QueueResource::class;
+    protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make(),
-
         ];
     }
 }
