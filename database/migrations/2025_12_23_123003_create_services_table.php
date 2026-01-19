@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('prefix');
             $table->integer('padding');
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->defaut(true);
             $table->timestamps();
         });
     }
