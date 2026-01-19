@@ -2,22 +2,22 @@
 
 namespace App\Filament\Resources;
 
+// --- PERUBAHAN PENTING DI SINI (KHUSUS FILAMENT V4) ---
+use Filament\Schemas\Schema; // Menggunakan Schema, bukan Form
+use Filament\Resources\Resource;
+
+use UnitEnum;
+use BackedEnum;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Resources\CounterResource\Pages;
-use App\Filament\Resources\CounterResource\RelationManagers;
 use App\Models\Counter;
 use App\Services\QueueService;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Livewire\Notifications;
+use Filament\Forms; // Kita tetap butuh ini untuk komponen (TextInput, Select, dll)
 use Filament\Notifications\Notification;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CounterResource extends Resource
 {
@@ -25,11 +25,11 @@ class CounterResource extends Resource
 
     protected static ?string $label = 'Loket';
 
-    protected static ?string $navigationIcon = 'heroicon-o-hashtag';
+    protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
-    protected static ?string $navigationGroup = 'Administrasi';
+    protected static UnitEnum|string|null $navigationGroup = 'Administrasi';
 
-    public static function canCreate(): bool
+public static function canCreate(): bool
     {
         return auth()->user()->role === 'admin';
     }
@@ -44,9 +44,17 @@ class CounterResource extends Resource
         return auth()->user()->role === 'admin';
     }
 
-    public static function form(Form $form): Form
+    public static function canViewAny(): bool
+{
+    // Pastikan user admin bisa melihat menu ini di sidebar
+    return auth()->user()->role === 'admin'; 
+}
+
+    // --- PERBAIKAN METHOD FORM UNTUK V4 ---
+    // Type hint diubah menjadi Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()

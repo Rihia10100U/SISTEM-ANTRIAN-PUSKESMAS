@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('service_id');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
         });
     }
 

@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('role')->default('admin');
             $table->foreignId('counter_id')->nullable();
-           
         });
     }
 
@@ -24,8 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-            $table->dropColumn('counter_id');
+            $table->dropColumn(['role', 'counter_id']);
         });
     }
 };

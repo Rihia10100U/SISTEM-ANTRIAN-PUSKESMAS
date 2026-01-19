@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\Counters\Pages;
+namespace App\Filament\Resources\CounterResource\Pages;
 
-use App\Filament\Resources\Counters\CounterResource;
-use Filament\Actions\CreateAction;
+use App\Filament\Resources\CounterResource;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageCounters extends ManageRecords
@@ -13,7 +13,7 @@ class ManageCounters extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }
