@@ -22,12 +22,12 @@ class Counter extends Model
      */
     public function activeQueue(): HasOne
     {
-        // Logic: Ambil satu antrian yang milik counter ini, 
+        // Logic: Ambil satu antrian yang milik counter ini,
         // yang statusnya BUKAN 'waiting', 'finished', atau 'canceled'.
         // Atau ambil yang paling terakhir diupdate (latestOfMany).
-        
+
         return $this->hasOne(Queue::class)
             ->whereIn('status', ['called', 'serving']) // Sesuaikan status "Aktif" menurut aplikasi Anda
-            ->latestOfMany(); 
+            ->latestOfMany();
     }
 }
