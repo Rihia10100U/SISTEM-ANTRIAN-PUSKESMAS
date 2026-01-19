@@ -2,19 +2,21 @@
 
 namespace App\Filament\Resources;
 
+// --- UPDATE KHUSUS FILAMENT V4 ---
+use Filament\Schemas\Schema; 
+use Filament\Resources\Resource;
+
+use UnitEnum;
+use BackedEnum;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Resources\QueueResource\Pages;
+use App\Filament\Resources\QueueResource\RelationManagers;
 use App\Models\Queue;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Facades\Filament;
-
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class QueueResource extends Resource
 {
@@ -22,13 +24,13 @@ class QueueResource extends Resource
 
     protected static ?string $label = 'Antrian';
 
-    protected static ?string $navigationIcon = 'heroicon-o-queue-list';
+    protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
-    protected static ?string $navigationGroup = 'Administrasi';
+    protected static UnitEnum|string|null $navigationGroup = 'Administrasi';
 
     public static function canAccess(): bool
     {
-        return Filament::auth()->user()?->role === 'admin';
+        return auth()->user()?->role === 'admin';
     }
 
     public static function canCreate(): bool
@@ -46,9 +48,16 @@ class QueueResource extends Resource
         return false;
     }
 
-    public static function form(Form $form): Form
+    public static function canViewAny(): bool
+{
+    // Pastikan user admin bisa melihat menu ini di sidebar
+    return auth()->user()->role === 'admin'; 
+}
+
+    // --- PERBAIKAN DI SINI (Menggunakan Schema) ---
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema // Perhatikan variabel ini sekarang $schema, bukan $form
             ->schema([
                 Forms\Components\TextInput::make('service_id')
                     ->required()
@@ -108,12 +117,13 @@ class QueueResource extends Resource
                 //
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                // Tambahkan prefix Tables\Actions\ agar tidak error class not found
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

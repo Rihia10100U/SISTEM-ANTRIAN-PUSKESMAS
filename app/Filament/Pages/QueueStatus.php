@@ -2,13 +2,16 @@
 
 namespace App\Filament\Pages;
 
+use BackedEnum;
+use UnitEnum;
+use Filament\Support\Icons\Heroicon;
 use App\Models\Queue;
 use Filament\Pages\BasePage;
 use Livewire\Attributes\Url;
 
 class QueueStatus extends BasePage
 {
-    protected static string $view = 'filament.pages.queue-status';
+    protected string $view = 'filament.pages.queue-status';
 
     protected static ?string $title = 'Status Antrian';
 
