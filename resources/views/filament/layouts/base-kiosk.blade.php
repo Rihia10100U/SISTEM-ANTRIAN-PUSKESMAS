@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Mesin Antrian Puskesmas Natuna</title>
+    <title>MESIN ANTRIAN PUSKESMAS CIPASUNG</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     @filamentScripts
@@ -13,7 +13,7 @@
 <body class="flex-col min-w-screen min-h-screen bg-gray-100">
     <header class="bg-green-700 text-white p-4">
         <div class="flex flex-col items-center">
-            <h1 class="text-2xl font-bold">Mesin Antrian Puskesmas Natuna</h1>
+            <h1 class="text-2xl font-bold">MESIN ANTRIAN PUSKESMAS CIPASUNG</h1>
             <div class="flex items-center mt-2">
                 <!-- Tanggal -->
                 <span id="date" class="text-lg font-medium"></span>

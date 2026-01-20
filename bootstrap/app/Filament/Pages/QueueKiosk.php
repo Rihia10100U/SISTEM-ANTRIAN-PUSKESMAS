@@ -40,7 +40,7 @@ class QueueKiosk extends Page
         $newQueue = $this->queueService->addQueue($serviceId);
 
         $text = $this->thermalPrinterService->createText([
-            ['text' => 'Puskesmas Natuna', 'align' => 'center'],
+            ['text' => 'PUSKESMAS CIPASUNG', 'align' => 'center'],
             ['text' => 'Jalan Kebenaran No. 123', 'align' => 'center'],
             ['text' => '-----------------', 'align' => 'center'],
             ['text' => 'NOMOR ANTRIAN', 'align' => 'center'],

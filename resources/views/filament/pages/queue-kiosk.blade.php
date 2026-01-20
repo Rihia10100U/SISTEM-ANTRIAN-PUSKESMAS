@@ -82,7 +82,7 @@
         
         {{-- Sub-judul / Nama Instansi (Opsional, agar terlihat resmi) --}}
         <h2 class="text-3xl font-bold text-green-700 mb-6">
-            PUSKESMAS NATUNA
+            PUSKESMAS CIPASUNG
         </h2>
 
         {{-- Instruksi yang Ramah & Jelas --}}
