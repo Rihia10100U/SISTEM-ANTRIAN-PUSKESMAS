@@ -1,11 +1,7 @@
 <div class="flex flex-col flex-grow p-4" wire:poll.500ms="callNextQueue">
     <div class="grid grid-cols-2 gap-6 justify-center">
         @foreach($counters as $counter)
-<<<<<<< Updated upstream
-        <div class="p-6 rounded-lg shadow-lg text-center border-l-4 border-{{ $counter->service->color }}-500 
-=======
         <div class="p-6 rounded-lg shadow-lg text-center border-l-4 border-{{ $counter->service->color }}-500
->>>>>>> Stashed changes
              @if($counter->is_active && !$counter->is_available) bg-green-100 @endif">
             <!-- Header dengan warna service -->
             <div class="mb-4">
@@ -22,11 +18,7 @@
                         {{ $counter->activeQueue->number }}
                     </div>
 
-<<<<<<< Updated upstream
-                    <div class="text-lg font-semibold px-4 py-1 rounded-full inline-block 
-=======
                     <div class="text-lg font-semibold px-4 py-1 rounded-full inline-block
->>>>>>> Stashed changes
                               bg-{{ $counter->service->color }}-100 text-{{ $counter->service->color }}-800
                               transition-colors duration-500">
                         {{ $counter->activeQueue->kiosk_label }}
@@ -60,8 +52,4 @@
         </div>
         @endforeach
     </div>
-<<<<<<< Updated upstream
 </div>
-=======
-</div>
->>>>>>> Stashed changes
