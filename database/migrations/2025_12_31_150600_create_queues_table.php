@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('queues', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('counter_id');
             $table->foreignId('service_id');
-            $table->integer('number');
-            $table->enum('status', ['waiting', 'called', 'served', 'canceled', 'finished'])->default('waiting');
+            $table->foreignId('counter_id')->nullable();
+            $table->string('number');
+            $table->string('status')->default('waiting');
             $table->timestamp('called_at')->nullable();
             $table->timestamp('served_at')->nullable();
             $table->timestamp('canceled_at')->nullable();

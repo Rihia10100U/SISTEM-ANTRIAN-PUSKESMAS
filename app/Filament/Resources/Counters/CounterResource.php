@@ -19,7 +19,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
- 
+
 
 class CounterResource extends Resource
 {
@@ -28,7 +28,7 @@ class CounterResource extends Resource
     protected static ?string $navigationLabel = 'Konter';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
-    
+
     protected static string|UnitEnum|null $navigationGroup = 'Administrasi';
 
     public static function form(Schema $schema): Schema

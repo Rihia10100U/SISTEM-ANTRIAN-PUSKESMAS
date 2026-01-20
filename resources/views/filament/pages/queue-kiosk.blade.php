@@ -1,55 +1,44 @@
-<div class="flex flex-col flex-grow p-4" wire:poll.500ms="callNextQueue">
-    <div class="grid grid-cols-2 gap-6 justify-center">
-        @foreach($counters as $counter)
-        <div class="p-6 rounded-lg shadow-lg text-center border-l-4 border-{{ $counter->service->color }}-500 
-             @if($counter->is_active && !$counter->is_available) bg-green-100 @endif">
-            <!-- Header dengan warna service -->
-            <div class="mb-4">
-                <h2 class="text-2xl font-bold mb-1">{{ $counter->name }}</h2>
-                <p class="text-{{ $counter->service->color }}-600 font-medium">
-                    {{ $counter->service->name }}
-                </p>
-            </div>
+<div class="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
 
-            <!-- Nomor antrian -->
-            <div class="space-y-2 transition-all duration-600 ease-in-out transform hover:scale-105">
-                @if($counter->activeQueue)
-                    <div class="text-5xl font-bold text-{{ $counter->service->color }}-600 animate-pulse">
-                        {{ $counter->activeQueue->number }}
-                    </div>
+    <div class="mb-10 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Selamat Datang</h1>
+        <p class="text-xl text-gray-600">Silakan pilih layanan untuk mengambil nomor antrian</p>
+    </div>
 
-                    <div class="text-lg font-semibold px-4 py-1 rounded-full inline-block 
-                              bg-{{ $counter->service->color }}-100 text-{{ $counter->service->color }}-800
-                              transition-colors duration-500">
-                        {{ $counter->activeQueue->kiosk_label }}
-                    </div>
-                @else
-                    <div class="text-4xl font-bold text-black-650">
-                        ---
-                    </div>
-                    <div class="text-lg text-black-500">
-                        Tidak ada antrian
-                    </div>
-                @endif
-            </div>
+    {{-- Grid Tombol Layanan --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
 
-            <!-- Status loket -->
-            <div class="mt-4">
-                <p class="text-sm font-medium rounded-full px-3 py-1 inline-block
-                         @if(!$counter->is_active) bg-gray-100 text-gray-800
-                         @elseif($counter->is_available) bg-green-100 text-green-800
-                         @else bg-yellow-100 text-yellow-800 @endif
-                         transition-colors duration-300">
-                    @if(!$counter->is_active)
-                        Loket tidak aktif
-                    @elseif($counter->is_available)
-                        Siap Melayani
-                    @else
-                        Sedang Melayani
-                    @endif
-                </p>
-            </div>
-        </div>
+        {{-- Loop Services dari Computed Property --}}
+        @foreach($this->services as $service)
+            <button
+                wire:click="print({{ $service->id }})"
+                wire:loading.attr="disabled"
+                class="relative group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl
+                       border-2 border-transparent hover:border-{{ $service->color ?? 'blue' }}-500
+                       transition-all duration-300 transform hover:-translate-y-1 text-center">
+
+                {{-- Efek Loading saat diklik --}}
+                <div wire:loading wire:target="print({{ $service->id }})"
+                     class="absolute inset-0 bg-white/80 flex items-center justify-center rounded-2xl z-10">
+                    <svg class="animate-spin h-8 w-8 text-{{ $service->color ?? 'blue' }}-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </div>
+
+                {{-- Nama Layanan --}}
+                <h3 class="text-3xl font-bold text-gray-800 group-hover:text-{{ $service->color ?? 'blue' }}-600 mb-2">
+                    {{ $service->name }}
+                </h3>
+
+                <p class="text-gray-500 font-medium">Klik untuk cetak tiket</p>
+            </button>
         @endforeach
+
+    </div>
+
+    {{-- Footer --}}
+    <div class="mt-12 text-gray-400 text-sm">
+        &copy; {{ date('Y') }} Puskesmas Tinewati
     </div>
 </div>
