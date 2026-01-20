@@ -2,23 +2,14 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema; 
-use Filament\Resources\Resource;
-use UnitEnum;
-use BackedEnum;
-use Filament\Support\Icons\Heroicon;
 use App\Filament\Resources\ServiceResource\Pages;
+use App\Filament\Resources\ServiceResource\RelationManagers;
 use App\Models\Service;
 use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-
-// --- PERBAIKAN DI SINI: Import Action secara spesifik ---
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -26,22 +17,27 @@ class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static ?string $navigationLabel = 'Layanan';
+    protected static ?string $label = 'Layanan';
 
-    // Pastikan class Heroicon ini tersedia, jika error ganti string icon biasa
-    protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Administrasi';
+    protected static ?string $navigationGroup = 'Administrasi';
 
-    // Perbaikan: Menggunakan Schema, bukan Form
-    public static function form(Schema $schema): Schema
+    public static function canAccess(): bool
     {
-        return $schema
-            ->schema([ // Gunakan ->schema(), bukan ->components() untuk standar umum
+        return auth()->user()->role === 'admin';
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('prefix')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('padding')
                     ->required()
                     ->numeric(),
@@ -75,12 +71,10 @@ class ServiceResource extends Resource
             ->filters([
                 //
             ])
-            // Perbaikan: Gunakan ->actions(), bukan ->recordActions()
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            // Perbaikan: Gunakan ->bulkActions(), bukan ->toolbarActions() untuk BulkActionGroup
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -94,10 +88,4 @@ class ServiceResource extends Resource
             'index' => Pages\ManageServices::route('/'),
         ];
     }
-
-    public static function canViewAny(): bool
-{
-    // Pastikan user admin bisa melihat menu ini di sidebar
-    return auth()->user()->role === 'admin'; 
-}
 }

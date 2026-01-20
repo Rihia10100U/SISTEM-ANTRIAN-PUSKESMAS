@@ -2,17 +2,13 @@
 
 namespace App\Filament\Resources;
 
-// --- UPDATE KHUSUS FILAMENT V4 ---
-use Filament\Schemas\Schema; 
-use Filament\Resources\Resource;
-
-use UnitEnum;
-use BackedEnum;
-use Filament\Support\Icons\Heroicon;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,29 +18,46 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationLabel = 'Pengguna';
+    protected static ?string $label = 'Pengguna';
 
-    // Pastikan Heroicon valid, jika error ganti string biasa
-    protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedBriefcase;
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Administrasi';
+    protected static ?string $navigationGroup = 'Administrasi';
 
-    // Perbaikan: Menggunakan Schema, bukan Form
-    public static function form(Schema $schema): Schema
+    protected static ?int $navigationSort = 4;
+
+    public static function canAccess(): bool
     {
-        return $schema
-            ->schema([ // Gunakan ->schema(), bukan ->components()
+        return auth()->user()->role === 'admin';
+    }
+    
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('email')
-                    ->label('Email address')
                     ->email()
-                    ->required(),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required() // Hapus required() jika ini form edit, atau buat conditional
-                    ->visibleOn('create'), // Opsional: biasanya password hanya wajib saat create
+                    ->required()
+                    ->maxLength(255)
+                    ->hiddenOn('edit'),
+                Forms\Components\Select::make('role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'operator' => 'Operator'
+                    ])
+                    ->default('admin')
+                    ->live()
+                    ->required(),
+                Forms\Components\Select::make('counter_id')
+                    ->relationship('counter', 'name')
+                    ->visible(fn(Get $get) => $get('role') === 'operator')
             ]);
     }
 
@@ -55,12 +68,15 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label('Email address')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('role')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('counter.name')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -68,12 +84,10 @@ class UserResource extends Resource
             ->filters([
                 //
             ])
-            // Perbaikan: Gunakan ->actions(), bukan ->recordActions()
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            // Perbaikan: Gunakan ->bulkActions(), bukan ->toolbarActions()
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -84,14 +98,7 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            // Perbaikan: Tambahkan prefix Pages\ agar sesuai import di atas
             'index' => Pages\ManageUsers::route('/'),
         ];
     }
-
-    public static function canViewAny(): bool
-{
-    // Pastikan user admin bisa melihat menu ini di sidebar
-    return auth()->user()->role === 'admin'; 
-}
 }
