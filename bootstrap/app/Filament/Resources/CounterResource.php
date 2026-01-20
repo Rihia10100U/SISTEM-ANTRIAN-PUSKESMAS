@@ -25,7 +25,7 @@ class CounterResource extends Resource
 
     protected static ?string $label = 'Loket';
 
-    protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedBriefcase;
+    protected static ?string $navigationIcon = 'heroicon-o-ticket';
 
     protected static UnitEnum|string|null $navigationGroup = 'Administrasi';
 
@@ -146,6 +146,7 @@ public static function canCreate(): bool
                     ->send();
             })
             ->label("Panggil")
+            ->color('warning')
             ->icon("heroicon-o-speaker-wave");
     }
 

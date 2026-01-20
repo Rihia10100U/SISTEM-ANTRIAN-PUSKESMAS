@@ -22,7 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'counter_id',
+        'counter_id'
     ];
 
     /**
@@ -52,4 +52,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Counter::class);
     }
-};
+}

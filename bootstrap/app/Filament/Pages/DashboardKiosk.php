@@ -33,10 +33,16 @@ class DashboardKiosk extends Page
 
     public function callNextQueue(): void
     {
-        $queues = Queue::where('status', 'waiting')
-            ->whereDate('created_at', now()->toDateString())
-            ->whereNull('called_at')
-            ->get();
+       $nextQueues = Queue::where('status', 'waiting')
+       ->whereDate('created_at', now()->format('Y-m-d'))
+       ->whereNull('called_at')
+       ->get();
+
+       foreach ($nextQueues as $nextQueue)
+       {
+            if (!$nextQueue->counter) continue;
+
+            $this->dispatch("queue-called", "Nomor Antrian " . $nextQueue->number . " segera ke " . $nextQueue->counter->name);
 
         foreach ($queues as $queue) {
             if (! $queue->counter) {
@@ -55,4 +61,5 @@ class DashboardKiosk extends Page
             ]);
         }
     }
+}
 }
