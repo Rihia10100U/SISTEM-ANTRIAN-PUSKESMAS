@@ -1,0 +1,193 @@
+<?php
+
+namespace App\Filament\Resources;
+
+// --- PERUBAHAN PENTING DI SINI (KHUSUS FILAMENT V4) ---
+use Filament\Schemas\Schema; // Menggunakan Schema, bukan Form
+use Filament\Resources\Resource;
+
+use UnitEnum;
+use BackedEnum;
+use Filament\Support\Icons\Heroicon;
+use App\Filament\Resources\CounterResource\Pages;
+use App\Models\Counter;
+use App\Services\QueueService;
+use Filament\Forms; // Kita tetap butuh ini untuk komponen (TextInput, Select, dll)
+use Filament\Notifications\Notification;
+use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+
+class CounterResource extends Resource
+{
+    protected static ?string $model = Counter::class;
+
+    protected static ?string $label = 'Loket';
+
+    protected static ?string $navigationIcon = 'heroicon-o-ticket';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Administrasi';
+
+public static function canCreate(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
+
+    public static function canViewAny(): bool
+{
+    // Pastikan user admin bisa melihat menu ini di sidebar
+    return auth()->user()->role === 'admin'; 
+}
+
+    // --- PERBAIKAN METHOD FORM UNTUK V4 ---
+    // Type hint diubah menjadi Schema
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('service_id')
+                    ->required()
+                    ->relationship('service', 'name'),
+                Forms\Components\Toggle::make('is_active')
+                    ->required(),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('service.name')
+                    ->label('Layanan')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('activeQueue.number')
+                    ->label('Nomor Antrian Saat ini')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('activeQueue.status')
+                    ->label('Status Antrian')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Status Aktif')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                self::getCallNextQueueAction(),
+                self::getServeQueueAction(),
+                self::getFinishQueueAction(),
+                self::getCancelQueueAction()
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
+            ->poll('5s');
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ManageCounters::route('/'),
+        ];
+    }
+
+    private static function getCallNextQueueAction()
+    {
+        return Action::make('callNextQueue')
+            ->button()
+            ->visible(fn(Counter $record) => $record->hasNextQueue)
+            ->action(function (Counter $record, $livewire) {
+                $nextQueue = app(QueueService::class)->callNextQueue($record->id);
+
+                if (!$nextQueue) {
+                    Notification::make()
+                        ->title('No queue available')
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
+                $nextQueue->update(['called_at' => null]);
+
+                Notification::make()
+                    ->title('Next queue called')
+                    ->success()
+                    ->send();
+            })
+            ->label("Panggil")
+            ->color('warning')
+            ->icon("heroicon-o-speaker-wave");
+    }
+
+    private static function getServeQueueAction()
+    {
+        return Action::make('serve')
+            ->label('Layani')
+            ->button()
+            ->color('success')
+            ->icon('heroicon-o-check-circle')
+            ->action(function (Counter $record) {
+                app(QueueService::class)->serveQueue($record->activeQueue);
+            })
+            ->requiresConfirmation()
+            ->visible(fn(Counter $record) => $record->is_available && $record->activeQueue);
+    }
+
+    private static function getFinishQueueAction()
+    {
+        return Action::make('finishQueue')
+            ->label('Selesai')
+            ->button()
+            ->icon('heroicon-o-check')
+            ->action(function (Counter $record) {
+                app(QueueService::class)->finishQueue($record->activeQueue);
+            })
+            ->requiresConfirmation()
+            ->visible(fn(Counter $record) => $record->activeQueue?->status === 'serving');
+    }
+
+    private static function getCancelQueueAction()
+    {
+        return Action::make('cancelQueue')
+            ->label('Batalkan')
+            ->button()
+            ->color('danger')
+            ->icon('heroicon-o-x-circle')
+            ->action(function (Counter $record) {
+                app(QueueService::class)->cancelQueue($record->activeQueue);
+            })
+            ->requiresConfirmation()
+            ->visible(fn(Counter $record) => $record->is_available && $record->activeQueue);
+    }
+}
