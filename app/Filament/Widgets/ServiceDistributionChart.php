@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 class ServiceDistributionChart extends ChartWidget
 {
     protected static ?string $heading = 'Kepadatan Layanan Hari Ini';
-    protected static ?int $sort = 2; // Urutan tampilan
+    protected static ?int $sort = 2; 
 
     protected function getData(): array
     {
@@ -29,7 +29,7 @@ class ServiceDistributionChart extends ChartWidget
                     ], // Warna-warni chart
                 ],
             ],
-            'labels' => $services->pluck('name'), // Label (Umum, Gigi, KIA)
+            'labels' => $services->pluck('name'), 
         ];
     }
 
