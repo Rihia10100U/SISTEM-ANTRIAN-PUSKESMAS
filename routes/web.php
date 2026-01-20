@@ -7,5 +7,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-Route::get('queue-status', QueueStatus::class);
+Route::get('queue-status', QueueStatus::class)->name('queue.status');

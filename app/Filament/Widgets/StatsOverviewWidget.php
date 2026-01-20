@@ -17,6 +17,7 @@ class StatsOverviewWidget extends BaseWidget
     {
         $today = Carbon::today();
 
+        // --- BAGIAN 1: STATISTIK GLOBAL ---
         $stats = [
             Stat::make('Total Antrian Masuk', Queue::whereDate('created_at', $today)->count())
                 ->description('Semua layanan')
