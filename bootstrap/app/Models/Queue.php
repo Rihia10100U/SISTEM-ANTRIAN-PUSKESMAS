@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Queue extends Model
 {
-    
+
     protected $fillable = [
         'counter_id',
         'service_id',
